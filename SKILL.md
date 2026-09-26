@@ -1,14 +1,14 @@
 ---
 name: app-store-connect-setup
 description: >-
-  Create an app in App Store Connect and fill in everything Apple needs before
+  Capture App Store screenshots with Maestro when none exist, then create an app in App Store Connect and fill in everything Apple needs before
   review: the New App record, App Information, age rating, pricing and
   availability, App Privacy, the auto-renewable subscription, the version page
   (description, keywords, screenshots, review notes), and attaching the build.
   Drives App Store Connect through gstack's browser (`$B`) after the user signs
   in themselves, pulls every value from the app repo, and writes the new App Store ID
-  back into the repo. Companion to app-store-screenshots (run that first for the
-  screenshots). USE THIS whenever the user wants to "create the app in App Store
+  back into the repo. Companion to app-store-screenshots, which styles the
+  captures. USE THIS whenever the user wants to "create the app in App Store
   Connect", "submit it to the App Store", "let's ship it", "publish this
   app", "set up the App Store listing", "fill in App Store Connect", "add the
   subscription in ASC", "get it ready for review", or "put <app> on the App
@@ -113,8 +113,18 @@ curl -s "https://itunes.apple.com/search?entity=software&country=us&limit=10&ter
 curl -s -o /dev/null -w '%{http_code}\n' "<privacy url>"
 ```
 
-**No screenshots yet?** Run the `app-store-screenshots` skill first; this
-skill needs its Desktop output. Everything else here can start while it runs.
+**No screenshots yet?** Capture them yourself with Maestro
+(`references/maestro-capture.md`): read the repo, pick the five shots plus
+the paywall, write `.maestro/screenshots.yaml` into the app repo, and run it
+on the iPhone 17 Pro Max and iPad Pro 13" simulators. Then hand the captures
+to the `app-store-screenshots` skill for styling. The user never has to press
+⌘S. Everything else in this skill can run while that happens.
+
+**Match a published sibling app.** If the user has live apps of the same
+kind, open one in App Store Connect and copy its choices unless the repo says
+otherwise: subscription price, availability, intro offers, billing grace
+period, Family Sharing, category, age rating. (Farkle matched Canasta:
+$3.99/yr, all countries, no intro offer.)
 
 Also check the screenshot pixel sizes with `sips -g pixelWidth -g pixelHeight`.
 See the field guide's § Version page for which sizes App Store Connect accepts.
@@ -218,6 +228,11 @@ Anchor: Shot Tracker" was taken, "GLP-1 Anchor" worked. The home-screen name
 stays whatever `app.json` says. Farkle (Sep 2026): "Farkle Score Tracker" was
 public-taken and "Farkle Score Keeper" was reserved by an unlisted app, so
 ask for a ranked list of acceptable names in Step 0 and try them in order.
+If you're choosing the fallback yourself, try the variants **closest to the
+user's own name first**. Punctuation counts as a different name ("Farkle:
+Score Tracker" was free), so try that before any new wording. The name can
+be changed later in App Information (the "Something went wrong" toast there
+was false; reload to check).
 After each Create, check `$B url` for `/apps/<id>` **before** trying the next
 name, or a retry loop can create duplicate apps. A successful create may
 show "Your user access settings could not be saved". That's harmless.
