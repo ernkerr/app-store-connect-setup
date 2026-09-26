@@ -9,7 +9,8 @@ description: >-
   in themselves, pulls every value from the app repo, and writes the new App Store ID
   back into the repo. Companion to app-store-screenshots (run that first for the
   screenshots). USE THIS whenever the user wants to "create the app in App Store
-  Connect", "set up the App Store listing", "fill in App Store Connect", "add the
+  Connect", "submit it to the App Store", "let's ship it", "publish this
+  app", "set up the App Store listing", "fill in App Store Connect", "add the
   subscription in ASC", "get it ready for review", or "put <app> on the App
   Store" and the app has no App Store Connect record or an incomplete one.
 ---
@@ -95,6 +96,9 @@ curl -s "https://itunes.apple.com/search?entity=software&country=us&limit=10&ter
 # Privacy policy must be live (Apple requires it for subscriptions, 3.1.2)
 curl -s -o /dev/null -w '%{http_code}\n' "<privacy url>"
 ```
+
+**No screenshots yet?** Run the `app-store-screenshots` skill first; this
+skill needs its Desktop output. Everything else here can start while it runs.
 
 Also check the screenshot pixel sizes with `sips -g pixelWidth -g pixelHeight`.
 See the field guide's § Version page for which sizes App Store Connect accepts.
