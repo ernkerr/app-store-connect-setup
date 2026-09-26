@@ -73,6 +73,14 @@ first; this skill uploads what it put on the Desktop.
 - **Verify each page.** After saving a page, take a screenshot and Read it.
   "Saved" toasts lie sometimes; red field errors don't.
 
+## Before Step 0 — Preflight must have passed
+
+Check `.preflight/last-run.json` in the app repo. If it's missing, its
+`verdict` isn't `ready`, or its `commit` isn't the current `git rev-parse
+HEAD`, run the `app-store-preflight` skill first. Its repo scan and smoke test
+can run while the user signs in (Step 0), and its walkthrough fits in the
+same sitting as Step 0's questions. Continue here only once it says ready.
+
 ## Step 0 — Sign-in first, so the rest runs unattended
 
 The user wants to start this skill and walk away. The only steps that need

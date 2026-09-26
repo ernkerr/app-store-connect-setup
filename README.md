@@ -14,7 +14,7 @@ the skill writes what went wrong or changed back into itself. Fork it so
 your lessons have somewhere to be pushed. See `SKILL.md` → "Learned the hard
 way". Pull requests with generic lessons are welcome.
 
-Companion to [app-store-screenshots](https://github.com/ernkerr/app-store-screenshots),
+Runs [app-store-preflight](https://github.com/ernkerr/app-store-preflight) first (rejection and security scan, simulator smoke test, your walkthrough). Companion to [app-store-screenshots](https://github.com/ernkerr/app-store-screenshots),
 which makes the store images this skill uploads.
 
 ## Install
