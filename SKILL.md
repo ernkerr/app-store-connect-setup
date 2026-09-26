@@ -270,8 +270,17 @@ review screenshot (a paywall capture). Full steps are in
 `references/field-guide.md` § Subscription. Goal state: every product reads
 **Ready to Submit**, not "Missing Metadata".
 
-Once the products exist, confirm the app actually loads them. Run it in the
-simulator and check the paywall shows live prices. GLP-1 was rejected twice
+Once the products exist, confirm the app actually loads them. A price on
+the paywall proves nothing if the code has a hardcoded fallback that reads
+the same, so **tap Subscribe in the simulator** (Maestro:
+`tapOn: "Subscribe.*"`). Apple's "Sign in to Apple Account" prompt means
+the product loaded from App Store Connect: react-native-iap won't start a
+purchase for a product it didn't load. The app log
+(`xcrun simctl spawn <udid> log show --predicate 'process == "<App>"'`)
+shows `SKProductsRequest` → `ProductRequest/Parse` → `Purchase_SK1`. A
+"Purchase failed" alert means it didn't load. Tap Cancel on Apple's prompt
+and never enter credentials. The full buy and restore needs the user's
+Sandbox account on TestFlight. GLP-1 was rejected twice
 (2.1(a)/(b)) because the purchase code silently never loaded the products.
 
 ## Step 7 — Version page (iOS App → 1.0 Prepare for Submission)
