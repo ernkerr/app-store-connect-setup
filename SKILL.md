@@ -72,7 +72,23 @@ first; this skill uploads what it put on the Desktop.
 - **Verify each page.** After saving a page, take a screenshot and Read it.
   "Saved" toasts lie sometimes; red field errors don't.
 
-## Step 0 — Gather the facts from the repo
+## Step 0 — Sign-in first, so the rest runs unattended
+
+The user wants to start this skill and walk away. The only steps that need
+them are sign-in and the decisions, so do both **before** any long work:
+
+1. Open the browser and send them to sign in right away (Step 2's commands).
+   Don't gather facts first and make them wait.
+2. While they sign in, gather the facts (Step 1 below) and run the checks.
+3. Ask **every** open question in ONE AskUserQuestion round, together with
+   the consent: app name (if taken), category, anything `ASK`, and the App
+   Review phone number if `ASC_CONTACT_PHONE` is unset. Tell them that once
+   they've signed in and answered, they can walk away.
+4. After that, don't stop to ask anything except the final "Submit for
+   Review?" If something unexpected comes up, pick the conservative option,
+   note it, and keep going. Put every such note in the final report.
+
+## Step 1 — Gather the facts from the repo
 
 The app repo is usually the working directory. Build a fact sheet from these
 sources and don't invent values. If one is missing, mark it `ASK`.
@@ -126,7 +142,7 @@ rebuild:
 - **Marketing version** must be higher than any version Apple already
   approved (for a first release, `1.0.0` is fine).
 
-## Step 1 — Show the plan, get one approval
+## Step 1b — Show the plan, get one approval (in the same round as Step 0.3)
 
 Show the user the fact sheet as a short table, plus anything marked `ASK` or
 failing a check. Then use AskUserQuestion once. List the actions exactly:
@@ -139,12 +155,31 @@ at the end.
 ## Step 2 — Open the browser and hand over sign-in
 
 ```bash
+cd <app repo>                   # ALWAYS run $B from this same directory (see below)
 B=~/.claude/skills/gstack/browse/dist/browse
-$B state load asc 2>/dev/null   # reuse a saved session if one exists
 $B connect                      # headed Chromium the user can see and type into
+$B state load asc 2>/dev/null   # reuse a saved session if one exists
 $B goto https://appstoreconnect.apple.com/apps
 $B snapshot -i | head -40
 ```
+
+**Keep the one visible window for the whole run.** The user wants to watch
+it, and silently falling back to headless loses their session.
+- gstack runs **one browser per working directory**. Running `$B` from
+  another folder (the skill dir, a scratchpad) starts a different, signed-out
+  browser, which looks exactly like "the session expired". `cd` into the app
+  repo in every command.
+- Before every step, check `$B status` says `Mode: headed` and `$B url` isn't
+  a `/login` page. If not, recover: `$B disconnect; $B stop; $B connect;
+  $B state load asc; $B goto <last url>`. (`--force-restart connect` can
+  report "Already connected" while no page exists.)
+- **Never `closetab` the last or active tab.** It closes the headed window.
+  Open a lookup in `newtab`, then `tab <n>` back instead of closing.
+- `$B state save asc` writes `<cwd>/.gstack/browse-states/asc.json`
+  (plaintext cookies; `.gstack/` carries its own `*` gitignore). Save again
+  after sign-in so recovery can restore it.
+- A tab the user signed into in their own Chrome is no use. It has to be the
+  gstack window.
 
 If the page shows the Apps list, they're already signed in. Otherwise tell them:
 "Sign in to App Store Connect in the Chromium window that just opened (Apple
@@ -160,14 +195,14 @@ drive it the /browse way instead; it already has their cookies.
 
 The New App dialog only offers bundle IDs registered to the team. Check
 first. If the ID is missing, pick one of these:
-- The first build registers it automatically: the local `xcodebuild ...
-  -allowProvisioningUpdates` archive in Step 8, or `eas build -p ios`. So a
-  brand-new app can build first (you don't need the app record to archive),
-  then come back here. Uploading does need the record.
+- `eas build -p ios` registers it. A local `xcodebuild` archive usually
+  does **not**: if the team has an "XC Wildcard" (`*`) App ID, Xcode signs
+  with that and registers nothing. Check the identifiers list; don't assume.
 - Register it by hand at
   `https://developer.apple.com/account/resources/identifiers/add/bundleId`
-  (same browser session): App IDs → App → Explicit, with **In-App Purchase**
-  checked. Description = app name.
+  (same browser session): App IDs → Continue → App → Continue, fill
+  `#description` (app name) and `#identifier` (Explicit is the default;
+  In-App Purchase is pre-checked and locked) → Continue → Register.
 
 ## Step 4 — Create the app record
 
@@ -180,7 +215,12 @@ launched, so the iTunes check can pass while App Store Connect still says
 "The App Name you entered is already being used." When that happens, move
 the descriptive part into the subtitle and keep the name short: "GLP-1
 Anchor: Shot Tracker" was taken, "GLP-1 Anchor" worked. The home-screen name
-stays whatever `app.json` says.
+stays whatever `app.json` says. Farkle (Sep 2026): "Farkle Score Tracker" was
+public-taken and "Farkle Score Keeper" was reserved by an unlisted app, so
+ask for a ranked list of acceptable names in Step 0 and try them in order.
+After each Create, check `$B url` for `/apps/<id>` **before** trying the next
+name, or a retry loop can create duplicate apps. A successful create may
+show "Your user access settings could not be saved". That's harmless.
 
 After it's created, the URL is `.../apps/<ASC_APP_ID>/...`. Read the number
 from `$B url`. Then write it back to the repo:
@@ -236,7 +276,13 @@ random order. If more than one file input exists, target the one inside the
 right device section (use a ref or scope with `snapshot -s`). Screenshot the
 page afterwards to confirm order and count. Repeat for iPad 13" when
 `supportsTablet` is true. App Review Information (write paste-ready notes)
-and Version Release are covered in the field guide.
+and Version Release are covered in the field guide. **"Sign-in required" is
+ticked by default**: untick it for apps without accounts. The page won't
+save at all without a valid contact phone. If `ASC_CONTACT_PHONE` is unset and
+the user is away, copy the App Review phone from one of their live apps
+(open it in a `newtab`, never print the number) and say so in the report.
+`$B upload` only accepts files under `/private/tmp` or the current repo, so
+copy screenshots into the scratchpad first.
 
 ## Step 8 — Build
 
@@ -276,9 +322,16 @@ mentioned above**.
 
 A first-time subscription **must go in the same review submission as the
 binary**. Submitted alone, it comes back as Guideline 2.1(b) ("binary not
-submitted"). On the version page, go to **In-App Purchases and
-Subscriptions**, then Select, then tick **every** new product (monthly and
-yearly both). They only appear there once they're **Ready to Submit**.
+submitted"). As of Sep 2026 there's no "In-App Purchases" picker on the
+version page. Instead everything goes into one **draft submission**:
+1. Subscription page → **Add for Review** (creates the draft).
+2. Version page → **Add for Review** → choose that existing draft (not
+   "Create New Submission").
+3. Subscription **group** page → **Add for Review** → same draft. Without it
+   the draft says "Your auto-renewable subscription must be submitted with its
+   subscription group".
+The draft panel should then list the version, every product and the group,
+with **Submit for Review** enabled. Adding to a draft submits nothing.
 Never tick a legacy one-time product that's being kept for old buyers, and
 never delete it either.
 
@@ -330,6 +383,17 @@ after 30 days, so this list is the only lasting record.
   the group's localization, each product's own review screenshot, and each
   product's price. A clock icon next to the price means pricing is still
   processing. Wait and reload; there's no tooltip.
+- Farkle (Sep 2026), first run of this skill: store name fell back twice
+  (see Step 4); the local archive didn't register the bundle ID (wildcard App
+  ID); changing directories and closing the last tab each silently lost the
+  signed-in browser (see Step 2); the version page wouldn't save without a
+  phone; the subscription group had to join the draft submission too.
+- Apple's error toasts can be wrong. Saving the subscription group's
+  localization showed "An error has occurred. Try again later." but it had
+  saved. Always reload and read the page before retrying.
+- Some App Store Connect buttons (the price "Choose" menu, the build radio,
+  Done) ignore `$B click @ref` or time out. `$B js` that finds the visible
+  button by its text and calls `.click()` works.
 - Watchlisted (Aug 2026): multi-file screenshot upload lands out of order,
   so upload one file per call. The visible iPhone slot took 1284×2778 (6.5")
   and rejected 1320×2868.

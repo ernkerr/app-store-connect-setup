@@ -38,6 +38,13 @@ the GLP-1 tracker. A medication or dose tracker is not medical treatment
 advice unless it gives advice. Media apps with mature synopses or posters
 (Watchlisted) answered 12+/13+ before. Match the listing doc.
 
+**The questionnaire (Sep 2026)** is a 7-step wizard with unlabeled radio
+buttons. Group them by `name` and read each group's row text. Yes/no groups use
+values `false`/`true`, and frequency groups use `NONE`/`INFREQUENT`/`FREQUENT`.
+Step 1 also asks about parental controls and age assurance (No, unless the app
+has them). Step 7 shows the calculated rating. Leave "Age Categories and
+Override" on Not Applicable and Save.
+
 **Regulated medical device** (asked for health apps): **No** for trackers
 and loggers like GLP-1 Anchor. They don't diagnose or treat anything. Keep
 the in-app medical disclaimer.
@@ -69,7 +76,11 @@ the in-app medical disclaimer.
    - Reference Name: `<App> Premium Yearly` (internal)
    - Product ID: **exactly** the ID from the code (`<app>_premium_yearly` by
      convention). It's permanent and can't be reused if deleted.
-3. On the product page:
+3. On the product page (Sep 2026 layout):
+   - Availability has no "select all". Tick each region header ("Europe
+     (0)" etc.) to select every country in it. Leave "automatically available
+     in future countries" and the new "Monthly with a 12-Month Commitment"
+     plan off unless the code sells them.
    - Subscription Duration: 1 Year (or whatever the code says)
    - Availability: all countries or regions
    - Subscription Prices: add the price from the code in **United States
