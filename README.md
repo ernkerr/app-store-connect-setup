@@ -43,7 +43,9 @@ Set your developer details once, in `~/.claude/settings.json`:
 }
 ```
 
-`ASC_CONTACT_PHONE` (the phone number for App Review) is optional. If it's
+`ASC_CONTACT_PHONE` (the phone number for App Review) and
+`ASC_PRIVACY_SITE_REPO` (the GitHub repo your privacy policies are published
+from, e.g. `you/you.github.io`) are optional. If it's
 unset, the skill asks each time. Any other value that's missing gets asked
 for too, never guessed. See `SKILL.md` → Configuration.
 

@@ -38,6 +38,7 @@ every Bash call) or export them in your shell profile:
 | `ASC_SUPPORT_URL` | `https://example.com` | Fallback Support URL when the app has none |
 | `ASC_PRIVACY_URL_TEMPLATE` | `https://you.github.io/legal/{app}/` | Where privacy policies usually live (`{app}` = slug) |
 | `ASC_CONTACT_PHONE` | *(optional)* | App Review contact phone. If unset, ask every run |
+| `ASC_PRIVACY_SITE_REPO` | `you/you.github.io` | *(optional)* GitHub repo that serves `ASC_PRIVACY_URL_TEMPLATE`, where a missing policy gets published |
 
 At Step 0, print them:
 
@@ -130,9 +131,25 @@ Also check the screenshot pixel sizes with `sips -g pixelWidth -g pixelHeight`.
 See the field guide's § Version page for which sizes App Store Connect accepts.
 iPad screenshots are only needed when `supportsTablet` is true.
 
-**Fix these in the repo before anything touches Apple.** They're permanent
-once an Apple record exists, and getting them wrong cost GLP-1 Anchor a
-rebuild:
+### Readiness checklist: fill in anything missing
+
+Check each item. If one is missing, fix it now, **before the build**: most are
+baked into the binary, and a fix after upload means a new build. List every
+fix you plan in the Step 1b approval, since some of them publish things.
+
+| Item | Missing if | Fix |
+|---|---|---|
+| Bundle ID + version | no `expo.ios.bundleIdentifier` / `version` in `app.json` (Capacitor: `appId` in `capacitor.config.ts` and the pbxproj) | Set `$ASC_BUNDLE_PREFIX.<appname>` (rules below), `version` `1.0.0`, `ios.buildNumber` `1`. Match the name to the other apps' pattern. |
+| Subscription product ID | a paywall exists but no product ID in config (`IAP_CONFIG`, `SubscriptionContext`, ...) | Add `<short>_premium_yearly` (rules below). Take the price and period from a published sibling app, or ask. Keep the display price in the config's single source of truth. |
+| Live privacy policy | `curl -o /dev/null -w '%{http_code}' <url>` isn't 200, or the app has no URL | Clone `$ASC_PRIVACY_SITE_REPO` to the scratchpad, copy a sibling app's page (e.g. `legal/<sibling>/index.html`) to `legal/<slug>/index.html`, and rewrite the app name, contact email, what's stored, and any third-party services (read `package.json` and the code, and claim nothing more). Commit, push, wait for Pages, and re-check for 200. Then set `APP_URLS.privacyPolicy` in the app. If the variable is unset, ask where policies live. |
+| Listing copy | no `docs/APP_STORE_LISTING.md` (or similar) | Draft it from the README, the screens and the code: name (30), subtitle (30), keywords (100, commas, no spaces, don't repeat name words), promo text (170), description (≤4000) ending with the Privacy Policy and Terms of Use (EULA) links, and a category suggestion. Only claim features that exist. Show it to the user in the Step 0 question round. |
+| Paywall disclosures | the paywall lacks Privacy Policy and Terms of Use links, or the auto-renew and price text | Add them, opening `APP_URLS.privacyPolicy` and Apple's EULA (below), plus "Auto-renews until cancelled. Cancel anytime in App Store settings." Copy the pattern from a sibling app's `PaywallModal`. Run typecheck and tests, then commit. |
+| Real app icon | a placeholder icon or the template default | Ask for the icon. Never ship a placeholder (2.3.8). |
+
+After the fixes, commit per the repo's rules and continue.
+
+**Rules for the values above.** They're permanent once an Apple record
+exists, and getting them wrong cost GLP-1 Anchor a rebuild:
 - **Bundle ID** = `$ASC_BUNDLE_PREFIX.<appname>`, lowercase with no
   separators (e.g. `canastascoretracker`, `glp1anchor`, `watchlisted`). If
   the user's existing apps follow another pattern, match that instead.
