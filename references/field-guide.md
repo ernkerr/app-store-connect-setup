@@ -99,6 +99,11 @@ the in-app medical disclaimer.
    screenshot. A clock icon next to the price means pricing is still
    processing, not missing.
 
+**Subscription group localization** (group page → Display Name → Create): Save
+stays disabled until the **Localization** select has a language (`$B select
+@ref en-US`). It then showed "An error has occurred. Try again later." but had
+saved — reload before retrying, or you create duplicates.
+
 ## Version page (iOS App → 1.0 Prepare for Submission)
 
 | Field | Value |
@@ -124,6 +129,18 @@ the in-app medical disclaimer.
   reach the paywall, the product IDs, "no account needed; data stays on
   device", and for subscriptions "purchase and restore can be tested with
   a Sandbox account".
+
+**Filling the version page by script (Sep 2026).** Promotional text,
+description, keywords and Version accept values set with the native value
+setter plus `input`/`change` events. The **App Review Information** fields
+(names, phone, email, Notes) don't: type them with `$B fill @ref`. The
+**Sign-in required** checkbox ignores `$B click` on the input (times out), a
+JS `.click()`, and Space: click its `<label>` instead (tag it, then
+`$B click 'label[data-x="1"]'`). Reload and read every field back.
+
+**Version number must match the binary.** App Store Connect creates the first
+version as "1.0"; an Expo app's binary says `1.0.0`. Set the page's Version
+field to the binary's `CFBundleShortVersionString` before attaching a build.
 
 **Version Release**: "Automatically release this version" unless the user asks
 for a manual release.

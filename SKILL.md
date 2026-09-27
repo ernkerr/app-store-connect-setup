@@ -459,3 +459,13 @@ after 30 days, so this list is the only lasting record.
 - Don't go looking for App Store Connect API keys (`AuthKey_*.p8`) or their
   issuer IDs. Auto mode blocks it as credential exploration, and the API
   can't create the app record anyway.
+- Watchlisted (Sep 2026), second pass on an existing record: the listing and
+  screenshots were a design behind the app, so compare every screenshot
+  against the current build before reusing them. Reviewers need a way to
+  reach the subscription without hitting the free limit (a Settings
+  "Get Premium" button); say where it is in the review notes. Seeding demo
+  data with Maestro tripped the app's own App Store review prompt
+  (expo-store-review) after 3 watched titles: dismiss "Not Now". A Maestro
+  flow without `launchApp` can leave the app backgrounded, so relaunch with
+  `xcrun simctl launch` between flows.
+
