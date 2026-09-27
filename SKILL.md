@@ -468,4 +468,7 @@ after 30 days, so this list is the only lasting record.
   (expo-store-review) after 3 watched titles: dismiss "Not Now". A Maestro
   flow without `launchApp` can leave the app backgrounded, so relaunch with
   `xcrun simctl launch` between flows.
-
+- `xcodebuild -exportArchive` with destination `upload` renumbers the build
+  past any already on the account (it manages the build number by default),
+  so the uploaded build may not match `app.json`. Read the number from the
+  Build picker, attach the newest, and sync the repo's build number after.
