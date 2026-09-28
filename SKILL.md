@@ -472,3 +472,15 @@ after 30 days, so this list is the only lasting record.
   past any already on the account (it manages the build number by default),
   so the uploaded build may not match `app.json`. Read the number from the
   Build picker, attach the newest, and sync the repo's build number after.
+- Swapping the build in a draft submission (Watchlisted, Sep 2026): the
+  version page locks the build once the version is in a draft ("To submit a
+  different one, you must first remove this version"). In the Draft
+  Submissions panel, the item's button aria-labelled "Delete" only removes it
+  from the draft, instantly with no confirmation (the version survives).
+  Then remove the old build row on the version page (its own "Delete"
+  button — the page has several, scope to the build's `<tr>`), Add Build →
+  pick the new one → Save, and Add for Review → the same draft.
+- An Apple session can expire mid-run (`Mode: launched` and a `/login`
+  redirect after `state load`). Stop polling loops first, then ask the user
+  to sign in again; don't let a loop hammer a signed-out page.
+
