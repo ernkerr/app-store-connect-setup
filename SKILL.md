@@ -484,3 +484,12 @@ after 30 days, so this list is the only lasting record.
   redirect after `state load`). Stop polling loops first, then ask the user
   to sign in again; don't let a loop hammer a signed-out page.
 
+- Resubmitting after a rejection (Oct 2026): "Resubmit to App Review" on the
+  submission page stays greyed out until the version is back in "Ready for
+  Review". Make the change on the version page (attach the new build, or edit
+  the App Review Notes), Save, reload, click **Update Review**, then
+  Resubmit. A 2.1(b) Information Needed reply alone sat unanswered for two
+  days; re-queue it this way with the steps added to the notes.
+- Swapping builds: the build row's Delete only appears on hover and just
+  detaches the build. Add Build's picker preselects the old build, so select
+  the new one and read the selection back before Done.
