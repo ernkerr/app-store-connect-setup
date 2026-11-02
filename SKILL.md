@@ -484,6 +484,17 @@ after 30 days, so this list is the only lasting record.
   redirect after `state load`). Stop polling loops first, then ask the user
   to sign in again; don't let a loop hammer a signed-out page.
 
+- Darts (Nov 2026): the store name fell back to the colon form again
+  ("Darts Score Tracker" was taken, "Darts: Score Tracker" worked). The
+  Subscribe-tap check in a simulator with no Apple account showed no sheet
+  at all: storekitd logged "Failed to add Anisette headers" against the
+  sandbox. The products had still loaded ("Returning 1 product(s) and 0
+  invalid identifier(s)"), which is the part that matters for 2.1. Leave
+  the real buy and restore to TestFlight. Only one gstack headed browser
+  can run per machine (fixed port 34567), so an old one from another repo
+  blocks `$B connect`. Ask before closing it. The Draft Submission menu item
+  is "Draft Submission (N)" with N counting its items, so don't match on
+  "(1)".
 - Resubmitting after a rejection (Oct 2026): "Resubmit to App Review" on the
   submission page stays greyed out until the version is back in "Ready for
   Review". Make the change on the version page (attach the new build, or edit

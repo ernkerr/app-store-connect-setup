@@ -68,6 +68,13 @@ the in-app medical disclaimer.
 
 ## Subscription (Monetization → Subscriptions)
 
+Nov 2026 changes: the availability dialog has a **Select All** button again
+(175 countries), and a new "Monthly with a 12-Month Commitment" plan sits
+beside "1 Year Upfront". Leave it off. A new product's status reads
+**Prepare for Submission** while editing, then **Ready for Review** after
+Add for Review. The review screenshot saves as soon as it uploads
+("Processing <file>"), with no Save needed.
+
 1. **Subscription group**: Reference Name `<App> Premium`. Then add the group's
    **App Store Localization** (English U.S.): display name `<App> Premium`.
    A group without a localization leaves its products stuck in "Missing
@@ -114,7 +121,7 @@ saved — reload before retrying, or you create duplicates.
 | Support URL | From the app's config, else `$ASC_SUPPORT_URL`. A `mailto:` isn't accepted |
 | Marketing URL | Optional; leave blank if none |
 | Copyright | `© <year> $ASC_COPYRIGHT_HOLDER` |
-| iPhone screenshots | Upload into whichever iPhone slot the page shows. It took 6.5" (1284×2778) and rejected 1320×2868 there in Aug 2026, so use the matching size from the screenshots `iPhone all-sizes/` folder. One file per upload, in slide order |
+| iPhone screenshots | Upload into whichever iPhone slot the page shows. It took 6.5" (1284×2778) and rejected 1320×2868 there in Aug 2026. In Nov 2026 the slot was "iPhone with Dynamic Island (medium display)", 1206×2622 or 1179×2556; a 1320×2868 Pro Max capture resized to 1206×2622 is within 0.1% of the ratio. Read the slot's "supported sizes" line first. One file per upload, in slide order |
 | iPad screenshots | 13" set, 2064×2752, only when `supportsTablet` is true. iPhone-only apps (GLP-1) skip this |
 | App Preview video | Skip unless provided |
 | Build | Select once processed (SKILL.md Step 8) |
@@ -141,6 +148,16 @@ JS `.click()`, and Space: click its `<label>` instead (tag it, then
 **Version number must match the binary.** App Store Connect creates the first
 version as "1.0"; an Expo app's binary says `1.0.0`. Set the page's Version
 field to the binary's `CFBundleShortVersionString` before attaching a build.
+
+**Finding the screenshot slots (Nov 2026 layout).** The version page now
+opens on "Header and Search Results" (custom header and search-result
+art, both optional). The screenshots sit behind that title, which is a
+dropdown: click it, then the "App Previews and Screenshots" menu item. A JS
+`.click()` on the item doesn't switch views; tag the visible `<a>` and use
+`$B click`. Device tabs: iPhone (medium display), iPhone Duo, iPad 13",
+Apple Watch. A notice after the first iPhone upload ("we'll use these for all
+iPhone sizes") needs OK. "Add for Review" stays blocked with "1 or more
+screenshots must finish processing" for a few minutes after upload.
 
 **Version Release**: "Automatically release this version" unless the user asks
 for a manual release.
